@@ -117,9 +117,6 @@ _finish:
                 var segment = wires[i];
                 List<double> intersectPoints = null;
 
-                AssertNaN(segment.A);
-                AssertNaN(segment.B);
-
                 for (int j = 0;j < triangles.Count; j++)
                 {
                     var triangle = triangles[j];
@@ -131,9 +128,6 @@ _finish:
                         {
                             if(intersectPoints == null)
                                 intersectPoints = new List<double>();
-
-                            if (double.IsNaN(intersectPoint))
-                                throw new Exception();
 
                             intersectPoints.Add(intersectPoint);
                         }
@@ -154,14 +148,6 @@ _finish:
                     foreach (var intersectPoint in intersectPoints)
                     {
                         var curPoint = segment.A + dir * intersectPoint;
-                        AssertNaN(curPoint);
-
-                        //var xsize = Math.Abs(segment.A.X - segment.B.X);
-                        //if (Math.Abs(segment.A.X - curPoint.X) > xsize ||
-                        //    Math.Abs(segment.B.X - curPoint.X) > xsize)
-                        //{
-                        //    int z = 0;
-                        //}
 
                         yield return new RenderWireSegment(
                             prevPoint, 
@@ -197,89 +183,87 @@ _finish:
                 var segment = wires[wireIdx];
 
                 segmentVisibleParts.Clear();
-                segmentVisibleParts.Add(segment);
+                segmentVisibleParts.Add(segment);                
                 
-                //if (segment.SecondTriangle == 5) // && segment.SecondTriangle == 6) // || segment.SecondTriangle == 5 && segment.FirstTriangle == 6)
+                for (int trgIdx = 0;
+                    trgIdx < triangles.Count && triangles[trgIdx].MinZ < segment.MaxZ;
+                    trgIdx++)
                 {
-                    for (int trgIdx = 0;
-                        trgIdx < triangles.Count && triangles[trgIdx].MinZ < segment.MaxZ;
-                        trgIdx++)
+                    newVisibleParts.Clear();
+                    var triangle = triangles[trgIdx];
+
+                    foreach (var segmentPart in segmentVisibleParts)
                     {
-                        newVisibleParts.Clear();
-                        var triangle = triangles[trgIdx];
+                        bool isSegmentIntersect = false;
 
-                        foreach (var segmentPart in segmentVisibleParts)
+                        if (triangle.BBox.Crossed2D(segmentPart.BBox) && !segmentPart.IsOwnerTriangle(triangle.Index))
                         {
-                            bool isSegmentIntersect = false;
+                            bool isOnGoodSide = true;
 
-                            if (triangle.BBox.Crossed2D(segmentPart.BBox) && !segmentPart.IsOwnerTriangle(triangle.Index))
+                            if (triangle.MaxZ > segmentPart.MinZ && triangle.MinZ < segmentPart.MaxZ)
                             {
-                                bool isOnGoodSide = true;
+                                var trgToSegCenter = segmentPart.BBox.Center - triangle.A;
+                                var trgToZero = -triangle.A;
 
-                                if (triangle.MaxZ > segmentPart.MinZ && triangle.MinZ < segmentPart.MaxZ)
+                                if (Math.Sign(Vector3D.DotProduct(trgToSegCenter, triangle.N)) ==
+                                    Math.Sign(Vector3D.DotProduct(new Vector3D(0, 0, -1), triangle.N)))
                                 {
-                                    var trgToSegCenter = segmentPart.BBox.Center - triangle.A;
-                                    var trgToZero = -triangle.A;
-
-                                    if (Math.Sign(Vector3D.DotProduct(trgToSegCenter, triangle.N)) ==
-                                        Math.Sign(Vector3D.DotProduct(new Vector3D(0, 0, -1), triangle.N)))
-                                    {
-                                        isOnGoodSide = false;
-                                    }
-                                }
-
-                                if (isOnGoodSide)
-                                {
-                                    bool isAInside, isBInside;
-                                    double k1, k2;
-                                    if (VectorUtils.IntersectTriangleAndSegment2D(triangle.A.To2D(), triangle.B.To2D(), triangle.C.To2D(), segmentPart.A.To2D(), segmentPart.B.To2D(),
-                                            out isAInside, out isBInside, out k1, out k2))
-                                    {
-                                        double k = k1;
-
-                                        if (!isAInside)
-                                        {
-                                            var newB = segmentPart.Interpolate(k);
-                                            newVisibleParts.Add(
-                                                new RenderWireSegment(
-                                                    segmentPart.A,
-                                                    newB,
-                                                    segmentPart.FirstTriangle,
-                                                    segmentPart.SecondTriangle,
-                                                    segmentPart.Obj1,
-                                                    segmentPart.Obj2));
-
-                                            k = k2;
-                                        }
-
-                                        if (!isBInside)
-                                        {
-                                            var newA = segmentPart.Interpolate(k);
-                                            newVisibleParts.Add(
-                                                new RenderWireSegment(
-                                                    newA,
-                                                    segmentPart.B,
-                                                    segmentPart.FirstTriangle,
-                                                    segmentPart.SecondTriangle,
-                                                    segmentPart.Obj1,
-                                                    segmentPart.Obj2));
-                                        }
-
-                                        isSegmentIntersect = true;
-                                    }
+                                    isOnGoodSide = false;
                                 }
                             }
 
-                            if (!isSegmentIntersect)
+                            if (isOnGoodSide)
                             {
-                                newVisibleParts.Add(segmentPart);
+                                bool isAInside, isBInside;
+                                double k1, k2;
+                                if (VectorUtils.IntersectTriangleAndSegment2D(triangle.A.To2D(), triangle.B.To2D(), triangle.C.To2D(), segmentPart.A.To2D(), segmentPart.B.To2D(),
+                                        out isAInside, out isBInside, out k1, out k2))
+                                {
+                                    double k = k1;
+
+                                    if (!isAInside)
+                                    {
+                                        var newB = segmentPart.Interpolate(k);
+                                        newVisibleParts.Add(
+                                            new RenderWireSegment(
+                                                segmentPart.A,
+                                                newB,
+                                                segmentPart.FirstTriangle,
+                                                segmentPart.SecondTriangle,
+                                                segmentPart.Obj1,
+                                                segmentPart.Obj2));
+
+                                        k = k2;
+                                    }
+
+                                    if (!isBInside)
+                                    {
+                                        var newA = segmentPart.Interpolate(k);
+                                        newVisibleParts.Add(
+                                            new RenderWireSegment(
+                                                newA,
+                                                segmentPart.B,
+                                                segmentPart.FirstTriangle,
+                                                segmentPart.SecondTriangle,
+                                                segmentPart.Obj1,
+                                                segmentPart.Obj2));
+                                    }
+
+                                    isSegmentIntersect = true;
+                                }
                             }
                         }
 
-                        segmentVisibleParts.Clear();
-                        segmentVisibleParts.AddRange(newVisibleParts);
+                        if (!isSegmentIntersect)
+                        {
+                            newVisibleParts.Add(segmentPart);
+                        }
                     }
+
+                    segmentVisibleParts.Clear();
+                    segmentVisibleParts.AddRange(newVisibleParts);
                 }
+                
 
                 foreach(var visibleSegmentPart in segmentVisibleParts)
                 {
@@ -326,14 +310,6 @@ _finish:
             allTriangles.Sort(Comparer<RenderTriangle>.Create((w1, w2) => w1.MinZ.CompareTo(w2.MinZ)));
 
             return FilterVisibleWires(allWires, allTriangles);
-        }
-
-        void AssertNaN(Vector3D v)
-        {
-            if(double.IsNaN(v.X) || double.IsNaN(v.Y) || double.IsNaN(v.Z))
-            {
-                throw new Exception();
-            }
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Demo
             _render.AddObject(obj1);
 
             var obj1Transform = new Matrix3D();
-            obj1Transform.Translate(new Vector3D(200, 0, 0));
+            obj1Transform.Translate(new Vector3D(220, 0, 0));
             obj1Transform.Rotate(QuaternionUtils.Create(new Vector3D(0, 0, 1), 0));
             obj1.ApplyTransform(obj1Transform);
 
@@ -70,7 +70,7 @@ namespace Demo
             _render.AddObject(obj3);
 
             var obj3Transform = new Matrix3D();
-            obj3Transform.Translate(new Vector3D(400, 0, 0));
+            obj3Transform.Translate(new Vector3D(380, 0, 0));
             obj3.ApplyTransform(obj3Transform);
 
 
@@ -102,16 +102,16 @@ namespace Demo
             obj1.ApplyTransform(tetraTransform1);
 
             var tetraTransform2 = new Matrix3D();
-            tetraTransform2.Rotate(QuaternionUtils.Create(new Vector3D(0, 1, 0), -0.01));
-            tetraTransform2.Rotate(QuaternionUtils.Create(new Vector3D(1, 0, 0), 0.01));
-            tetraTransform2.Rotate(QuaternionUtils.Create(new Vector3D(0, 0, 1), 0.01));
+            tetraTransform2.Rotate(QuaternionUtils.Create(new Vector3D(0, 1, 0), -0.02));
+            tetraTransform2.Rotate(QuaternionUtils.Create(new Vector3D(1, 0, 0), -0.02));
+            tetraTransform2.Rotate(QuaternionUtils.Create(new Vector3D(0, 0, 1), -0.02));
             obj2.ApplyTransform(tetraTransform2);
             
             var tetraTransform3 = new Matrix3D();
-            tetraTransform3.Rotate(QuaternionUtils.Create(new Vector3D(0, 1, 0), 0.01));
-            tetraTransform3.Rotate(QuaternionUtils.Create(new Vector3D(1, 0, 0), -0.01));
-            tetraTransform3.Rotate(QuaternionUtils.Create(new Vector3D(0, 0, 1), 0.01));
-            obj3.ApplyTransform(tetraTransform2);            
+            tetraTransform3.Rotate(QuaternionUtils.Create(new Vector3D(0, 1, 0), 0.03));
+            tetraTransform3.Rotate(QuaternionUtils.Create(new Vector3D(1, 0, 0), 0.03));
+            tetraTransform3.Rotate(QuaternionUtils.Create(new Vector3D(0, 0, 1), 0.03));
+            obj3.ApplyTransform(tetraTransform3);            
         }
 
         WireObject3D CreateLeftTriangle()

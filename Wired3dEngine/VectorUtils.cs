@@ -71,54 +71,7 @@ namespace Wire3dEngine
             else
             {
                 return false;
-            }
-
-            // result = new Vector3D();
-            // dirK = 0;
-            // var dir = (b - a);
-            // dir.Normalize();
-            // var orig = a;
-            // var v0v1 = v1 - v0;
-            // var v0v2 = v2 - v0;
-
-            // var N = Vector3D.CrossProduct(v0v1, v0v2);
-            // var nDotRay = Vector3D.DotProduct(N, dir);
-
-            // if (Math.Abs(Vector3D.DotProduct(N, dir)) < EPSILON) 
-            //     return false; // ray parallel to triangle 
-
-            // var d = Vector3D.DotProduct(N, v0);
-            // dirK = -(Vector3D.DotProduct(N, orig) + d) / nDotRay;
-
-            // if (dirK < 0 || dirK > 1)
-            //     return false;
-
-            // if (onlyCheckPlane)
-            //     return true;
-
-            // // inside-out test
-            // var Phit = dir * dirK + orig;
-
-            //// inside-out test edge0
-            // var v0p = Phit - v0;
-            // var v = Vector3D.DotProduct(N, Vector3D.CrossProduct(v0v1, v0p));
-            // if (v < 0) return false; // P outside triangle
-
-            // // inside-out test edge1
-            // var v1p = Phit - v1;
-            // var v1v2 = v2 - v1;
-            // var w = Vector3D.DotProduct(N, Vector3D.CrossProduct(v1v2, v1p));
-            // if (w < 0) return false; // P outside triangle
-
-            // // inside-out test edge2
-            // var v2p = Phit - v2;
-            // var v2v0 = v0 - v2;
-            // var u = Vector3D.DotProduct(N, Vector3D.CrossProduct(v2v0, v2p));
-            // if (u < 0) return false; // P outside triangle
-
-            // result = orig + dir * dirK;
-
-            // return true;
+            }            
         }
 
         public static bool IntersectSegments2D(Vector a, Vector b, Vector c, Vector d, out double ua)

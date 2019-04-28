@@ -108,7 +108,8 @@ namespace Wire3dEngine
 
                             var n1 = Vector3D.CrossProduct(a1, b1);
 
-                            if (Math.Abs(Vector3D.DotProduct(n1, a2)) < 0.0001 && Math.Abs(Vector3D.DotProduct(n1, b2)) < 0.0001)
+                            if (Math.Abs(Vector3D.DotProduct(n1, a2)) < VectorUtils.EPSILON && 
+                                Math.Abs(Vector3D.DotProduct(n1, b2)) < VectorUtils.EPSILON)
                             {
                                 return false;
                             }
