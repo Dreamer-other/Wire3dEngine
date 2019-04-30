@@ -1,6 +1,6 @@
-Wire 3d Engine
+### Wire 3d Engine
 
-It's a render of multiple wire 3d objects with the correct view of their intersections.
+It's a render of multiple 3d objects by drawing lines of its edges with <b>the correct view of their intersections</b>.
 It doesn't use techniques like Z-buffer but it processes the intersection of objects geometrically.
 
 The solution consists of two projects:
